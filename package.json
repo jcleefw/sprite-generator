@@ -5,17 +5,21 @@
   "license": "MIT",
   "dependencies": {
     "gulp": "^4.0.2",
+    "gulp-cheerio": "^1.0.0",
     "gulp-plumber": "^1.2.1",
+    "gulp-rename": "^2.0.0",
     "gulp-svg-sprite": "^1.5.0",
     "path": "^0.12.7"
   },
   "devDependencies": {
     "@types/gulp": "^4.0.7",
     "@types/node": "^14.14.2",
+    "gulp-clean": "^0.4.0",
+    "gulp-svg-symbols": "^3.2.3",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.3"
   },
   "scripts": {
-    "gulp": "rm -rf ./out && node_modules/gulp-cli/bin/gulp.js"
+    "gulp": "node_modules/gulp-cli/bin/gulp.js"
   }
 }

@@ -8,6 +8,7 @@ export const config = {
     spacing: {
       padding: [0, 16, 32, 16],
     },
+
     dest: 'out/intermediate-svg', // Keep the intermediate files
   },
   mode: {
@@ -17,7 +18,9 @@ export const config = {
       render: {
         scss: true, // Activate Sass output (with default options)
       },
+      layout: 'packed',
     },
+
     symbol: true, // Activate the «symbol» mode
   },
 }
