@@ -1,20 +1,15 @@
-import { isParenthesizedExpression } from 'typescript'
-
 const gulp = require('gulp')
 const svgSprite = require('gulp-svg-sprite')
 const plumber = require('gulp-plumber')
 const { config } = require('./config')
 const cheerio = require('gulp-cheerio')
 const clean = require('gulp-clean')
-const svgSymbols = require('gulp-svg-symbols')
+// const svgSymbols = require('gulp-svg-symbols')
 const rename = require('gulp-rename')
+const fs = require('fs')
 
-function cleanColorized(cb) {
+function cleanup(cb) {
   gulp.src(['colorized/']).pipe(clean())
-  cb()
-}
-
-function cleanBuild(cb) {
   gulp.src(['build/']).pipe(clean())
   cb()
 }
@@ -39,32 +34,44 @@ function svgCheerio(cb) {
         })
       )
       .pipe(gulp.dest('colorized'))
-    // .pipe(gulp.dest(`${color}`, { cwd: 'colorized' }))
   })
   cb()
 }
 
-function patchingTogether(cb) {
-  gulp.src(['colorized/**/*.svg']).pipe(svgSymbols()).pipe(gulp.dest('patch'))
+function svgRowSpriteGenerator(cb) {
+  const dirs = fs.readdirSync('./colorized')
+  dirs.forEach((dir) => {
+    gulp
+      .src(`./${dir}/*.svg`, { cwd: './colorized' })
+      .pipe(plumber())
+      .pipe(svgSprite(config('horizontal', [0, 16, 32, 16])))
+      .on('error', function (error) {
+        console.log(error)
+      })
+      .pipe(gulp.dest(`${dir}`, { cwd: 'colorized/horizontal' }))
+  })
 
   cb()
 }
 
-function svgSpriteGenerator(cb) {
-  gulp
-    .src('**/*.svg', { cwd: './colorized' })
-    .pipe(plumber())
-    .pipe(svgSprite(config))
-    .on('error', function (error) {
-      console.log(error)
-    })
-    .pipe(gulp.dest('build'))
+function svgPackedSpriteGenerator(cb) {
+  const dirs = fs.readdirSync('./colorized')
+  dirs.forEach((dir) => {
+    gulp
+      .src(`**/*.svg`, { cwd: './colorized/horizontal' })
+      .pipe(plumber())
+      .pipe(svgSprite(config('vertical')))
+      .on('error', function (error) {
+        console.log(error)
+      })
+      .pipe(gulp.dest('build'))
+  })
+
   cb()
 }
 
-exports.patch = patchingTogether
-exports.cleanColorized = cleanColorized
-exports.cleanBuild = cleanBuild
+exports.pack = svgPackedSpriteGenerator
+exports.spriteRow = svgRowSpriteGenerator
 exports.cheerio = svgCheerio
-exports.sprite = svgSpriteGenerator
-exports.default = gulp.task(svgSpriteGenerator)
+exports.cleanup = cleanup
+exports.default = gulp.series(svgCheerio, svgRowSpriteGenerator, svgPackedSpriteGenerator)

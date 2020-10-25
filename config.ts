@@ -1,15 +1,15 @@
-export const config = {
+export const config = (layout, spacing) => ({
   shape: {
     dimension: {
       // Set maximum dimensions
-      maxWidth: 64,
-      maxHeight: 64,
+      maxWidth: 500,
+      maxHeight: 500,
     },
     spacing: {
-      padding: [0, 16, 32, 16],
+      padding: spacing,
     },
 
-    dest: 'out/intermediate-svg', // Keep the intermediate files
+    // dest: `${layout}/intermediate-svg`, // Keep the intermediate files
   },
   mode: {
     view: {
@@ -18,9 +18,10 @@ export const config = {
       render: {
         scss: true, // Activate Sass output (with default options)
       },
-      layout: 'packed',
+      layout: layout,
+      // example: true,
     },
 
     symbol: true, // Activate the «symbol» mode
   },
-}
+})
