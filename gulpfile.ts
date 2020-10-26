@@ -4,9 +4,9 @@ const plumber = require('gulp-plumber')
 const { config } = require('./config')
 const cheerio = require('gulp-cheerio')
 const clean = require('gulp-clean')
-// const svgSymbols = require('gulp-svg-symbols')
 const rename = require('gulp-rename')
 const fs = require('fs')
+const colors = require('./colors').default
 
 function cleanup(cb) {
   gulp.src(['colorized/']).pipe(clean())
@@ -15,25 +15,26 @@ function cleanup(cb) {
 }
 
 function svgCheerio(cb) {
-  const colors = ['tomato', 'green', 'blue', 'brown']
-  colors.forEach((color) => {
-    gulp
-      .src(['assets/*.svg'])
-      .pipe(
-        cheerio(function ($, file) {
-          $('path').each(function () {
-            var path = $(this)
-            path.attr('fill', color)
-          })
-        })
-      )
-      .pipe(
-        rename(function (path) {
-          path.dirname = path.basename
-          path.basename += `-${color}`
-        })
-      )
-      .pipe(gulp.dest('colorized'))
+  Object.keys(colors).forEach(([key, value]) => {
+    console.log(`${key}: ${value}`)
+    // gulp
+    //   .src(['assets/*.svg'])
+    //   .pipe(
+    //     cheerio(function ($, file) {
+    //       $('path').each(function () {
+    //         var path = $(this)
+    //         path.attr('fill', value.fade)
+    //       })
+    //     })
+    //   )
+    //   .pipe(
+    //     rename(function (path) {
+    //       // path.dirname = path.basename // use this if you want to horizontal group the same symbol in a row
+    //       path.dirname = color // use this if you want to horizontal group the same color in a row
+    //       path.basename += `-${color}`
+    //     })
+    //   )
+    //   .pipe(gulp.dest('colorized'))
   })
   cb()
 }
