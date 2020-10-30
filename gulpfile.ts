@@ -15,26 +15,33 @@ function cleanup(cb) {
 }
 
 function svgCheerio(cb) {
-  Object.keys(colors).forEach(([key, value]) => {
-    console.log(`${key}: ${value}`)
-    // gulp
-    //   .src(['assets/*.svg'])
-    //   .pipe(
-    //     cheerio(function ($, file) {
-    //       $('path').each(function () {
-    //         var path = $(this)
-    //         path.attr('fill', value.fade)
-    //       })
-    //     })
-    //   )
-    //   .pipe(
-    //     rename(function (path) {
-    //       // path.dirname = path.basename // use this if you want to horizontal group the same symbol in a row
-    //       path.dirname = color // use this if you want to horizontal group the same color in a row
-    //       path.basename += `-${color}`
-    //     })
-    //   )
-    //   .pipe(gulp.dest('colorized'))
+  Object.entries(colors).forEach(([key, value]) => {
+    gulp
+      .src(['assets/*.svg'])
+      .pipe(
+        cheerio(function ($, file) {
+          $('path').each(function () {
+            var path = $(this)
+            if (path.attr('fill')) {
+              path.attr('fill') === 'grey'
+                ? path.attr('fill', value['fade'])
+                : path.attr('fill', value['solid'])
+            }
+
+            if (path.attr('stroke')) {
+              path.attr('stroke', value['solid'])
+            }
+          })
+        })
+      )
+      .pipe(
+        rename(function (path) {
+          // path.dirname = path.basename // use this if you want to horizontal group the same symbol in a row
+          path.dirname = key // use this if you want to horizontal group the same color in a row
+          path.basename += `-${key}`
+        })
+      )
+      .pipe(gulp.dest('colorized'))
   })
   cb()
 }
